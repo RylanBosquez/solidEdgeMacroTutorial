@@ -1,0 +1,39 @@
+STEP translation to Solid Edge
+Date: Wednesday,September 24,2025 11:49AM
+Source File: C:\Users\rbosquez\OneDrive - Komatsu Ltd\Desktop\Code\Python\GitHub Repos\solidEdgeMacroTutorial\assets\stepFolder\Woodem Lounge Chair.STEP
+Author: Unknown
+Organization: Unknown
+Source System: SolidWorks 2024
+
+Hardware:
+Processor: Intel(R) Core(TM) Ultra 7 155H
+Operating System: Windows 8 Enterprise Edition
+Installed Memory: 63.45 GB
+
+Software Information
+Parasolid Version: 30.1.278
+PSBodyShop Version: 30.1.94
+Step Adapter Version: 4.0.108
+Solid Edge Version: 219.00.11.004 x64
+
+Step Import Options
+Import Faceted Bodies: On
+Import Check Bodies: Off
+Import Curves: On
+Import DoNotSave: On
+Import Multiple Bodies As Single Part File: On
+Import Stitch Surfaces: On
+Import Boolean Solids: On
+Make Base Feature: On
+Simplify Geometry: On
+Import Imprint Curves: On
+Import Drive: C:
+Import Stitch Surfaces: On
+Import Surfaces: On
+Import Output Path: C:\Users\rbosquez\OneDrive - Komatsu Ltd\Desktop\Code\Python\GitHub Repos\solidEdgeMacroTutorial\assets\stepFolder
+Import Enable Default Output Path: On
+Import Path: 
+
+Translating to Parasolid data types...
+Translation process completed
+Total time required to translate and post process:00 : 00 : 02

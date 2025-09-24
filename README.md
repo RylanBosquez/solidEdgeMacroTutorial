@@ -22,13 +22,11 @@ python -m venv solidEdgeEnv
 solidEdgeEnv\Scripts\activate.bat  # Windows
 ```
 
-
 ### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
-
 
 ### 3. Clone the repository
 
@@ -41,7 +39,7 @@ cd solidEdgeMacroTutorial
 
 ## 📁 Folder Structure
 
-```
+```bash
 solidEdgeMacroTutorial/
 ├── assets/                         # Exported files (PDF, DXF, DWG, JT)
 ├── scripts/                        # Python automation scripts
@@ -54,7 +52,6 @@ solidEdgeMacroTutorial/
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
 ```
-
 
 ---
 
@@ -88,7 +85,6 @@ python solidEdgeVersion.py
 - Read and modify title block text
 - Export sheet thumbnails as images
 
-
 ---
 
 ## 🧩 Requirements
@@ -107,4 +103,3 @@ python solidEdgeVersion.py
 - All exports are saved to the `assets/` folder.
 
 ---
-
