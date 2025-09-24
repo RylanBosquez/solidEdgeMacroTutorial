@@ -1,32 +1,21 @@
-# =============================== Script In Progress ==============================
-
 import os
+import ctypes
 import comtypes.client
-from ctypes import c_float
-from comtypes.automation import IDispatch, VARIANT, VT_DISPATCH, VT_I4, VT_R4, DISPATCH_METHOD
-
-# Load Solid Edge type libraries
-comtypes.client.GetModule(r"C:\Program Files\Siemens\Solid Edge 2019\Program\framewrk.tlb")
-comtypes.client.GetModule(r"C:\Program Files\Siemens\Solid Edge 2019\Program\Part.tlb")
-
-from comtypes.gen import SolidEdgeFramework, SolidEdgePart
-
-def getDispIdByName(dispatch, methodName):
-    return dispatch.GetIDsOfNames(methodName)[0]
+from comtypes.safearray import _midlSAFEARRAY
+from comtypes.automation import IDispatch
 
 def createParametricCylinder():
     try:
         seApp = comtypes.client.GetActiveObject("SolidEdge.Application")
         print("Connected to running Solid Edge instance.")
     except:
-        seApp = comtypes.client.CreateObject("SolidEdge.Application", interface=SolidEdgeFramework.Application)
+        seApp = comtypes.client.CreateObject("SolidEdge.Application")
         print("Started new Solid Edge instance.")
 
     seApp.Visible = True
 
     seDocuments = seApp.Documents
     sePartDoc = seDocuments.Add("SolidEdge.PartDocument")
-    sePartDoc = sePartDoc.QueryInterface(SolidEdgePart.PartDocument)
     sePartDoc.Activate()
 
     refPlanes = sePartDoc.RefPlanes
@@ -35,15 +24,28 @@ def createParametricCylinder():
     profileSet = sePartDoc.ProfileSets.Add()
     profiles = profileSet.Profiles
     profile = profiles.Add(frontPlane)
-    profile = profile.QueryInterface(SolidEdgePart.Profile)
 
     circles2d = profile.Circles2d
     circles2d.AddByCenterRadius(0.0, 0.0, 0.025)
     profile.End(False)
 
-    # Extrude
+    print(f"Profile Type: {type(profile)}")
 
+    # Force profile into IDispatch
+    profile_dispatch = profile.QueryInterface(IDispatch)
 
+    # Build SAFEARRAY of IDispatch
+    SAFEARRAY_Dispatch = _midlSAFEARRAY(ctypes.POINTER(IDispatch))
+    psa = SAFEARRAY_Dispatch.from_param([profile_dispatch])
+
+    models = sePartDoc.Models
+
+    models.AddFiniteExtrudedProtrusion(
+        ctypes.c_long(1),     # NumberOfProfiles
+        psa,                  # SAFEARRAY of profiles
+        ctypes.c_long(2),     # Direction: 1 = Front, 2 = Back, 3 = Both
+        ctypes.c_double(0.1)  # ExtrusionDistance
+    )
 
     print("Done.")
 
