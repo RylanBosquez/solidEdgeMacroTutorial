@@ -1,8 +1,9 @@
 import os
 import inspect
 import comtypes.client
-import comtypes.automation
 import comtypes.safearray
+import comtypes.automation
+import comtypes.gen.SolidEdgeDraft
 
 from comtypes.automation import _midlSAFEARRAY
 
@@ -88,57 +89,61 @@ def getMethodsFromClasses(tlbPath, classList):
             print(f"Class '{className}' not found in module '{moduleName}'.")
             
             
-def getMethodParameters(tlbPath, className, methodList):
+def inspectMethodSignatures(tlbPath, className, methodList):
     moduleName = comtypes.client.GetModule(tlbPath).__name__.split('.')[-1]
-
     try:
         module = getattr(comtypes.gen, moduleName)
-    except AttributeError:
-        print(f"Module '{moduleName}' not found in comtypes.gen.")
-        return
-
-    try:
         cls = getattr(module, className)
     except AttributeError:
         print(f"Class '{className}' not found in module '{moduleName}'.")
         return
 
-    for methodName in methodList:
-        try:
-            method = getattr(cls, methodName)
-            sig = inspect.signature(method)
-            print(f"\nMethod: {methodName}")
-            for param in sig.parameters.values():
-                print(f"  Param: {param.name} (Type: {param.annotation})")
-        except AttributeError:
-            print(f"\nMethod '{methodName}' not found in class '{className}'.")
-        except ValueError:
-            print(f"\nMethod '{methodName}' has no inspectable signature.")
+    
+    if hasattr(cls, '_methods_'):
+        for method in cls._methods_:
+            
+            if method.name not in methodList:
+                continue
+            
+            print(f"\nMethod: {method.name}")
+            print(f"  Return Type: {method.restype}")
+            for i, (argType, paramFlag) in enumerate(zip(method.argtypes, method.paramflags)):
+                direction = paramFlag[0]
+                name = paramFlag[1]
+                print(f"  Param {i+1}: {name}, Type: {argType}, Direction: {direction}")
+    else:
+        print(f"No _methods_ found for class '{className}'.")
 
 
+    
+
+def listAllModules(folderPath):
+    
+    for file in os.listdir(folderPath):
+        if file.endswith(".py"):
+            print(file)
+    
 
 if __name__ == "__main__":
     
     os.system('cls')
     
     solidEdgeFolder = r"C:\Program Files\Siemens\Solid Edge 2019\Program" # <-- change this to your Solid Edge folder
-    tlbPath = "C:\Program Files\Siemens\Solid Edge 2019\Program\Part.tlb"
+    tlbPath = r"C:\Program Files\Siemens\Solid Edge 2019\Program\draft.tlb"# <-- change this to your TLB file
+    moduleFolderPath = r"C:\Users\rbosquez\.conda\envs\solidEdgeEnv\Lib\site-packages\comtypes\gen" # <-- change this to your module folder
     
     #listTlbFiles(solidEdgeFolder)
     
-    # inspectTlbs(
-    #     ['framewrk.tlb', 'Part.tlb', 'geometry.tlb', 'constants.tlb', 'SolidEdgeGateway.tlb'],
-    #     ['PartDocument', 'Model', 'Body', 'MassProperties'],
-    #     solidEdgeFolder)
+    #inspectTlbs( ['draft.tlb'], ['DraftDocument'], solidEdgeFolder)
     
     #inspectImport(comtypes.automation)
     
-    #getMethodsFromClasses(tlbPath, ['PartDocument', 'Model'])
+    #getMethodsFromClasses(tlbPath, ['DraftDocument'])
     
-    getMethodParameters(tlbPath, '_IModelAuto', [
-        'ComputePhysicalProperties',
-        'ComputePhysicalPropertiesRelativeToCoordinateSystem',
-        'ComputePhysicalPropertiesWithSpecifiedDensity',
-        'GetPhysicalProperties',
-        'GetPhysicalPropertiesRelativeToCoordinateSystem'
-    ])
+    #getMethodParameters(tlbPath, ['comtypes.gen.SolidEdgeDraft.DraftDocument.PrintOutEx'])
+
+    #findModuleContainingClass(tlbPath, 'DraftDocument')
+    
+    #listAllModules(moduleFolderPath)
+    
+    inspectMethodSignatures(tlbPath, '_IDraftDocumentAuto', ['PrintOut'])

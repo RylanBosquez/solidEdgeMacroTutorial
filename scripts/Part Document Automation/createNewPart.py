@@ -2,7 +2,7 @@ import os
 import comtypes.client
 
 
-def createSolidEdgePart(partName):
+def createSolidEdgePart(partName, savePath):
     
     try:
         
@@ -27,7 +27,6 @@ def createSolidEdgePart(partName):
         assetsFolder = os.path.join(os.getcwd(), "assets") 
         os.makedirs(assetsFolder, exist_ok=True)
         
-        savePath = os.path.abspath(os.path.join(assetsFolder, partName))
         sePartDoc.SaveAs(savePath)
         print(f"New Part Document created and saved to: {savePath}")
 
@@ -46,4 +45,5 @@ if __name__ == "__main__":
 
     # Run the macro 
     partName = "examplePart.par"
-    createSolidEdgePart(partName)
+    savePath = os.path.abspath(os.path.join(os.getcwd(), "assets/partFolder"))
+    createSolidEdgePart(partName, savePath)
