@@ -5,8 +5,6 @@ import comtypes.gen.SolidEdgeDraft as sedraft
 
 def weldCalloutIdentifier():
     
-    # igWeldSymbol = -42581280
-    
     try:
         seApp = comtypes.client.GetActiveObject("SolidEdge.Application")
     except OSError:
