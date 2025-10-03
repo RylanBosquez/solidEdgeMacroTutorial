@@ -1,4 +1,5 @@
 import os
+import openpyxl
 import comtypes.client
 
 from comtypes.automation import VARIANT
@@ -6,36 +7,37 @@ from comtypes.automation import VARIANT
 
 def exportPartlistToExcel():
     
+    savePath = './assets/partlist.xlsx' # <------------ Change this to your save path
+    
     try:
         seApp = comtypes.client.GetActiveObject("SolidEdge.Application")
     except:
         print("No running Solid Edge instance found.")
         return
+    
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    
+    headerRow = ['Item', 'Part Number', 'Qty', 'Description']
+    worksheet.append(headerRow)
 
     seApp.Visible = True
     seDoc = seApp.ActiveDocument
     
-    print(f'Name: {seDoc.Name}\n')
-
     partsList = seDoc.PartsLists
     
-    for partsListIndex in range(partsList.Count):
+    partList = partsList.Item(1) # Grab the first parts list if only part list, else loop over
+    
+    for rowIndex in range(partList.Rows.Count):
         
-        partList = partsList.Item(partsListIndex+1)
+        for colIndex in range(partList.Columns.Count):
         
-        rows = partList.Rows
-        columns = partList.Columns
+            try:
+                worksheet.cell(row=rowIndex+2, column=colIndex+1).value = partList.Cell(VARIANT(rowIndex + 1), VARIANT(colIndex + 1)).value
+            except:
+                pass
         
-        for rowIndex in range(rows.Count):
-            
-            for colIndex in range(columns.Count):
-            
-                try:
-                    print(partList.Cell(VARIANT(rowIndex + 1), VARIANT(colIndex + 1)).value, end='\t')
-                except:
-                    pass
-                
-            print()
+    workbook.save(savePath)
 
 
 if __name__ == "__main__":
